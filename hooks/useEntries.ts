@@ -5,7 +5,7 @@ import { todayString, addDays } from "@/lib/dates";
 
 export interface EntryData {
   text: string;
-  mood: null;
+  mood: string | null;
   tags: string[];
 }
 

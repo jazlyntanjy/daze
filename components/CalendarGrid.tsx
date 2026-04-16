@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEntries } from "@/hooks/useEntries";
+import { getMoodColor } from "@/lib/mood";
 import {
   toDateString,
   todayString,
@@ -113,7 +114,9 @@ export function CalendarGrid() {
           const dateStr = toDateString(new Date(viewYear, viewMonth, day));
           const isFuture = dateStr > todayStr;
           const isToday = dateStr === todayStr;
-          const hasEntry = !!entries[dateStr]?.text?.trim();
+          const entry = entries[dateStr];
+          const hasEntry = !!entry?.text?.trim();
+          const dotColor = hasEntry ? getMoodColor(entry?.mood ?? null) : "transparent";
 
           return (
             <button
@@ -134,11 +137,7 @@ export function CalendarGrid() {
               </span>
               <span
                 className="mt-1.5 w-1 h-1 rounded-full"
-                style={{
-                  backgroundColor: hasEntry
-                    ? "var(--theme-accent)"
-                    : "transparent",
-                }}
+                style={{ backgroundColor: dotColor }}
               />
             </button>
           );

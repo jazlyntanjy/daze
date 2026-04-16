@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEntries } from "@/hooks/useEntries";
 import { formatDisplayDate, todayString, addDays } from "@/lib/dates";
+import { MoodSelector } from "@/components/MoodSelector";
 
 export function EntryEditor({ date: dateProp }: { date?: string }) {
   const date = dateProp ?? todayString();
@@ -13,16 +14,24 @@ export function EntryEditor({ date: dateProp }: { date?: string }) {
   const router = useRouter();
 
   const [text, setText] = useState("");
+  const [mood, setMood] = useState<string | null>(null);
   // Tracks which date's entry we've loaded, so typing doesn't re-initialize text
   const loadedForRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (!isHydrated) return;
     if (loadedForRef.current === date) return;
-    setText(getEntry(date)?.text ?? "");
+    const entry = getEntry(date);
+    setText(entry?.text ?? "");
+    setMood(entry?.mood ?? null);
     loadedForRef.current = date;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date, isHydrated]);
+
+  function handleMoodChange(m: string | null) {
+    setMood(m);
+    saveEntry(date, { mood: m });
+  }
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     const value = e.target.value;
@@ -70,11 +79,14 @@ export function EntryEditor({ date: dateProp }: { date?: string }) {
       {/* Back link */}
       <Link
         href="/calendar"
-        className="text-[11px] mb-6 self-start"
+        className="text-[11px] mb-5 self-start"
         style={{ color: "var(--theme-muted)" }}
       >
         ← calendar
       </Link>
+
+      {/* Mood selector */}
+      <MoodSelector value={mood} onChange={handleMoodChange} disabled={isFuture} />
 
       {/* Textarea */}
       <textarea
