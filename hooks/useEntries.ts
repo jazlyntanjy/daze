@@ -46,5 +46,15 @@ export function useEntries() {
     return streak;
   }
 
-  return { getEntry, saveEntry, getAllEntries, getStreak, isHydrated };
+  function getTagIndex(): Record<string, string[]> {
+    const index: Record<string, string[]> = {};
+    for (const [date, entry] of Object.entries(entries)) {
+      for (const tag of entry.tags ?? []) {
+        (index[tag] ??= []).push(date);
+      }
+    }
+    return index;
+  }
+
+  return { getEntry, saveEntry, getAllEntries, getStreak, getTagIndex, isHydrated };
 }

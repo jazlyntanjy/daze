@@ -7,6 +7,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEntries } from "@/hooks/useEntries";
 import { formatDisplayDate, todayString, addDays } from "@/lib/dates";
 import { MoodSelector } from "@/components/MoodSelector";
+import { TagInput } from "@/components/TagInput";
 
 export function EntryEditor({ date: dateProp }: { date?: string }) {
   const date = dateProp ?? todayString();
@@ -15,6 +16,7 @@ export function EntryEditor({ date: dateProp }: { date?: string }) {
 
   const [text, setText] = useState("");
   const [mood, setMood] = useState<string | null>(null);
+  const [tags, setTags] = useState<string[]>([]);
   // Tracks which date's entry we've loaded, so typing doesn't re-initialize text
   const loadedForRef = useRef<string | null>(null);
 
@@ -24,6 +26,7 @@ export function EntryEditor({ date: dateProp }: { date?: string }) {
     const entry = getEntry(date);
     setText(entry?.text ?? "");
     setMood(entry?.mood ?? null);
+    setTags(entry?.tags ?? []);
     loadedForRef.current = date;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [date, isHydrated]);
@@ -31,6 +34,11 @@ export function EntryEditor({ date: dateProp }: { date?: string }) {
   function handleMoodChange(m: string | null) {
     setMood(m);
     saveEntry(date, { mood: m });
+  }
+
+  function handleTagsChange(t: string[]) {
+    setTags(t);
+    saveEntry(date, { tags: t });
   }
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
@@ -108,6 +116,9 @@ export function EntryEditor({ date: dateProp }: { date?: string }) {
           {text.length} characters
         </span>
       </div>
+
+      {/* Tags */}
+      <TagInput tags={tags} onChange={handleTagsChange} disabled={isFuture} />
     </main>
   );
 }
