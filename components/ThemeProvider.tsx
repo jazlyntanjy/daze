@@ -2,18 +2,21 @@
 
 import { createContext, useContext, useEffect } from "react";
 import { useLocalStorage } from "@/hooks/useLocalStorage";
-import { themes, defaultTheme, type Theme } from "@/lib/themes";
+import { DEFAULT_ACCENT } from "@/lib/accent";
+import { DEFAULT_FONT, type FontId } from "@/lib/fonts";
 
 interface ThemeContextValue {
-  theme: Theme;
-  setThemeId: (id: string) => void;
-  themes: Theme[];
+  accent: string;
+  setAccent: (hex: string) => void;
+  font: FontId;
+  setFont: (id: FontId) => void;
 }
 
 const ThemeContext = createContext<ThemeContextValue>({
-  theme: defaultTheme,
-  setThemeId: () => {},
-  themes,
+  accent: DEFAULT_ACCENT,
+  setAccent: () => {},
+  font: DEFAULT_FONT,
+  setFont: () => {},
 });
 
 export function useTheme() {
@@ -21,20 +24,15 @@ export function useTheme() {
 }
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [themeId, setThemeId] = useLocalStorage("daze-theme", defaultTheme.id);
-  const theme = themes.find((t) => t.id === themeId) ?? defaultTheme;
+  const [accent, setAccent] = useLocalStorage("daze-accent", DEFAULT_ACCENT);
+  const [font, setFont] = useLocalStorage<FontId>("daze-font", DEFAULT_FONT);
 
   useEffect(() => {
-    const el = document.documentElement;
-    el.style.setProperty("--theme-bg", theme.bg);
-    el.style.setProperty("--theme-surface", theme.surface);
-    el.style.setProperty("--theme-accent", theme.accent);
-    el.style.setProperty("--theme-text", theme.text);
-    el.style.setProperty("--theme-muted", theme.muted);
-  }, [theme]);
+    document.documentElement.style.setProperty("--theme-accent", accent);
+  }, [accent]);
 
   return (
-    <ThemeContext.Provider value={{ theme, setThemeId, themes }}>
+    <ThemeContext.Provider value={{ accent, setAccent, font, setFont }}>
       {children}
     </ThemeContext.Provider>
   );

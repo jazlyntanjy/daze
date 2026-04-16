@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEntries } from "@/hooks/useEntries";
+import { useTheme } from "@/components/ThemeProvider";
+import { FONTS } from "@/lib/fonts";
 import { formatDisplayDate, todayString, addDays } from "@/lib/dates";
 import { MoodSelector } from "@/components/MoodSelector";
 import { TagInput } from "@/components/TagInput";
@@ -12,6 +14,8 @@ import { TagInput } from "@/components/TagInput";
 export function EntryEditor({ date: dateProp }: { date?: string }) {
   const date = dateProp ?? todayString();
   const { getEntry, saveEntry, isHydrated } = useEntries();
+  const { font } = useTheme();
+  const fontCss = FONTS.find((f) => f.id === font)?.css ?? FONTS[0].css;
   const router = useRouter();
 
   const [text, setText] = useState("");
@@ -98,8 +102,9 @@ export function EntryEditor({ date: dateProp }: { date?: string }) {
 
       {/* Textarea */}
       <textarea
-        className="flex-1 w-full bg-transparent resize-none outline-none font-serif text-[17px] leading-relaxed min-h-[50vh] placeholder:opacity-40"
+        className="flex-1 w-full bg-transparent resize-none outline-none text-[17px] leading-relaxed min-h-[50vh] placeholder:opacity-40"
         style={{
+          fontFamily: fontCss,
           color: isFuture ? "var(--theme-muted)" : "var(--theme-text)",
         }}
         placeholder={isFuture ? "" : "What's on your mind today?"}
