@@ -19,7 +19,6 @@ const lora = Lora({
 export const metadata: Metadata = {
   title: "daze",
   description: "for your daily daze.",
-  manifest: "/manifest.json",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
@@ -32,7 +31,6 @@ export const viewport: Viewport = {
   initialScale: 1,
   maximumScale: 1,
   userScalable: false,
-  themeColor: "#1a1a2e",
 };
 
 export default function RootLayout({
@@ -42,6 +40,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${geist.variable} ${lora.variable} h-full`}>
+      <head>
+        <link rel="manifest" href="/manifest.json" />
+        <meta name="theme-color" content="#1a1a2e" />
+      </head>
       <body className="h-full flex flex-col antialiased">
         <ThemeProvider>
           <PageTransition>{children}</PageTransition>
