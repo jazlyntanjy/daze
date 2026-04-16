@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useEntries } from "@/hooks/useEntries";
@@ -26,6 +26,16 @@ export function CalendarGrid() {
   const entries = getAllEntries();
   const streak = getStreak();
 
+  const confettiFiredRef = useRef(false);
+  useEffect(() => {
+    if (streak === 7 && !confettiFiredRef.current) {
+      confettiFiredRef.current = true;
+      import("canvas-confetti").then(({ default: confetti }) => {
+        confetti({ particleCount: 80, spread: 60, origin: { y: 0.3 } });
+      });
+    }
+  }, [streak]);
+
   const daysInMonth = getDaysInMonth(viewYear, viewMonth);
   const firstDay = getFirstDayOfWeek(viewYear, viewMonth);
   const cells: (number | null)[] = [
@@ -46,9 +56,13 @@ export function CalendarGrid() {
     <main className="flex flex-col px-5 pt-6 pb-4 max-w-sm mx-auto w-full">
       {/* Streak */}
       <div className="h-6 mb-4">
-        {streak > 0 && (
+        {streak > 0 ? (
           <span className="text-sm" style={{ color: "var(--theme-muted)" }}>
             🔥 {streak} day streak
+          </span>
+        ) : (
+          <span className="text-sm" style={{ color: "var(--theme-muted)" }}>
+            Start your streak — write today!
           </span>
         )}
       </div>
