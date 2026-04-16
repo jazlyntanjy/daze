@@ -1,12 +1,10 @@
-export default function TodayPage() {
-  return (
-    <main className="flex flex-col items-center justify-center min-h-full px-6 py-12">
-      <h1 className="font-serif text-2xl" style={{ color: "var(--theme-text)" }}>
-        today
-      </h1>
-      <p className="mt-2 text-sm" style={{ color: "var(--theme-muted)" }}>
-        What&apos;s on your mind today?
-      </p>
-    </main>
-  );
+import { EntryEditor } from "@/components/EntryEditor";
+
+export default async function TodayPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ date?: string }>;
+}) {
+  const { date } = await searchParams;
+  return <EntryEditor date={date} />;
 }
